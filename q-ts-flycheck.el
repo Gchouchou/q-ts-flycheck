@@ -26,10 +26,8 @@
 
 CHECKER is not used."
   (funcall callback 'finished
-           (apply #'append
-                  (mapcar (lambda (funcname)
-                            (funcall funcname))
-                          q-ts-flycheck-linters))))
+           (mapcan #'funcall
+                   q-ts-flycheck-linters)))
 
 (defun q-ts-flycheck-errors-and-invalid-atoms ()
   "Find all error and invalid atom nodes in parse tree."
