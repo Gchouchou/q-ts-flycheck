@@ -29,18 +29,21 @@ CHECKER is not used."
            (mapcan #'funcall
                    q-ts-flycheck-linters)))
 
+(defconst q-ts-flycheck--error-invalid-query
+  (treesit-query-compile
+   'q
+   '((ERROR) @error
+     (MISSING) @missing
+     (invalid_atom) @invalid
+     (infix_projection) @infix_projection
+     (implicit_composition) @implicit_composition))
+  "Compiled treesitter query for getting error and invalid atoms.")
+
 (defun q-ts-flycheck-errors-and-invalid-atoms ()
   "Find all error and invalid atom nodes in parse tree."
   (let* ((capture (treesit-query-capture
                    (treesit-buffer-root-node 'q)
-                   (treesit-query-compile
-                    'q
-                    '((ERROR) @error
-                      (MISSING) @missing
-                      (invalid_atom) @invalid
-                      (infix_projection) @infix_projection
-                      (implicit_composition) @implicit_composition)
-                    t))))
+                   q-ts-flycheck--error-invalid-query)))
     (mapcar (lambda (match)
               (let* ((group (car match))
                      (node (cdr match))
